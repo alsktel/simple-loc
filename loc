@@ -1,0 +1,298 @@
+#!/bin/bash
+
+# Counter of code lines
+# Created by Alexander E. (eastev) <eastevrud31@gmail.com>
+# https://github.com/eastev/CodeLinesCounter
+
+echo ""
+echo -e "\e[1mCodeLinesCounter\e[0m"
+echo ""
+
+conf=./clc/loc.conf
+
+show_help()
+{
+    echo -e "\e[1mUsage:\e[0m"
+    echo "loc -h                    to show this help"
+    echo "loc -i                    to intergrate loc to your commands"
+    echo "loc -r                    to remove loc from your commands"
+    echo "loc -f [file]             to count lines of code in one file"
+    echo "loc [directory]           to count lines of code from all files"
+    echo "                          in directory and subdirectories"
+    echo ""
+
+    exit 0
+}
+
+integrate()
+{
+    echo "Integrating CodeLinesCounter to your commands..."
+    echo "This action is needing a root access"
+    echo -e "\e[1;31mWARNING!\e[0;31m"
+    echo "Enter your root password if you only trust program"
+    echo -e "Do not enter the password in suspicious programms\e[0m"
+    echo "Integrating need access to /bin to create loc command file"
+    echo "and /etc to create config file"
+    echo ""
+    echo -n "Are you sure? [ yes, no ]: "
+
+    read answ
+
+    if [[ "$answ" == "yes" || "$answ" == "y" ]]
+    then
+        echo ""
+        echo "Root access..."
+
+        if [[ ! -d $conf ]]
+        then
+            sudo cp -r ./clc /etc
+        fi
+
+        sudo cp -r ./loc /bin
+        sudo chmod +x /bin/loc
+
+        echo ""
+        echo -e "Integration \e[0;32mSuccessfull\e[0m!"
+        echo ""
+    else
+        echo ""
+        echo "Integration was aborted!"
+        echo "If you doubt abot root access - check the script and make sure that it is safe"
+        echo ""
+    fi
+
+    exit 0
+}
+
+remove ()
+{
+    if [[ ! -d /etc/clc ]] && [[ ! -f /bin/loc ]]
+    then 
+        echo "Nothing to remove!"
+        echo ""
+
+        exit 0
+    fi
+
+    echo "Removing CodeLinesCounter to your commands..."
+    echo "This action is needing a root access"
+    echo -e "\e[1;31mWARNING!\e[0;31m"
+    echo "Enter your root password if you only trust program"
+    echo -e "Do not enter the password in suspicious programms\e[0m"
+    echo "Integrating need access to /bin to remove loc command file"
+    echo "and /etc to remove config file"
+    echo ""
+    echo -n "Are you sure? [ yes, no ]: "
+
+    read answ 
+
+    if [[ "$answ" == "y" || "$answ" == "yes" ]]
+    then
+        if [[ -d /etc/clc ]]
+        then
+            sudo rm -rf /etc/clc
+        fi
+
+        if [[ -f /bin/loc ]]
+        then
+            sudo rm /bin/loc
+        fi
+
+        echo ""
+        echo "Removing complete!"
+        echo ""
+
+        exit 0
+    fi
+
+    echo ""
+    echo "Removing was aborted!"
+    echo ""
+
+    exit 0
+}
+
+if (( $# == 0 ))
+then
+    show_help
+fi
+
+if [[ "$1" == "-i" ]]
+then
+    if [[ ! -f /bin/loc ]]
+    then 
+        integrate
+    else
+        echo "All is up-to-date!"
+        echo ""
+
+        exit 0
+    fi
+fi
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]
+then 
+    show_help
+fi
+
+if [[ "$1" == "-r" ]]
+then
+    remove
+fi
+
+if (( $# == 1 ))
+then
+    if [[ -d $1 ]]
+    then
+        files=$(find $1 -type f | rev | sort | rev)
+
+        if [[ "$files" == "" ]]
+        then
+            echo "No files found!"
+            echo ""
+
+            exit 0
+        fi
+
+        ext=""
+        lang=""
+        comment=""
+        linescount=0
+        fnd=0
+
+        echo "Language      Code lines"
+
+        while read line
+        do
+            IFS='.'
+            read -a file <<< $line
+            exttoken=${file[-1]}
+
+            if [[ "$ext" == "" ]]
+            then
+                ext="$exttoken"
+            fi
+
+            cfg=$(grep "$exttoken" "$conf")
+
+            if [[ "$cfg" != "" ]]
+            then
+                if [[ "$ext" != "$exttoken" ]]
+                then
+                    if [[ "$lang" != "" && $linescount != 0 ]]
+                    then
+                        echo "$lang                 $linescount"
+                        linescount=0
+                        fnd=1
+                    fi
+
+                    ext=$exttoken
+                fi
+
+                IFS=' '
+                read -a cfgarr <<< $cfg
+                comment=${cfgarr[1]}
+                lang=${cfgarr[2]}
+
+                while read codeline
+                do
+                    if [[ "$codeline" != "" && "$codeline" != " " && "$codeline" != "$comment"* ]]
+                    then
+                        linescount=$(($linescount + 1))
+                    fi
+                done < $line
+            fi
+        done <<< $files
+
+        if (( $linescount != 0 ))
+        then
+            echo "$lang             $linescount"
+            linescount=0
+            fnd=1
+        fi
+
+        if (($fnd == 0))
+        then
+            echo "Nothing           0"
+        fi
+
+        echo ""
+
+        exit 0
+    else
+        if [[ "$1" == "-f" ]]
+        then
+            echo "No arguments, use: loc -f [file]"
+            echo ""
+
+            exit 1
+        else
+            echo "No such directory: $1"
+            echo ""
+
+            exit -1
+        fi
+    fi
+fi
+
+if (( $# > 1 ))
+then
+    if [[ "$1" == "-f" ]]
+    then
+        if [[ -f $2 ]]
+        then
+            echo "Language         Code lines"
+
+            IFS='.'
+            read -a file <<< $2
+            ext=${file[-1]}
+
+            cfg=$(grep "$ext" "$conf")
+
+            if [[ "$cfg" == "" ]]
+            then
+                echo "Nothing           0"
+                echo ""
+
+                exit 0
+            fi
+
+            IFS=' '
+            read -a cfgarr <<< $cfg
+            comment=${cfgarr[1]}
+            lang=${cfgarr[2]}
+            linescount=0
+
+            while read code
+            do
+                  if [[ "$code" != "" && "$code" != " " && "$code" != "$comment"* ]]
+                 then
+                     linescount=$(($linescount + 1))
+                 fi
+            done < $2
+
+            if (( $linescount != 0 ))
+            then
+                echo "$lang               $linescount"
+                echo ""
+
+                exit 0
+            else
+                echo "Nothing           0"
+                echo ""
+
+                exit 0
+            fi
+        else
+            echo "File not found: $2"
+            echo ""
+
+            exit -1
+        fi
+    else
+        echo "Invalid arguments!"
+        echo ""
+
+        exit 1
+    fi
+fi
