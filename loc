@@ -8,7 +8,14 @@ echo ""
 echo -e "\e[1mCodeLinesCounter\e[0m"
 echo ""
 
-conf=./clc/loc.conf
+conf=""
+
+if [[ -f /etc/clc/loc.conf ]]
+then
+    conf=/etc/clc/loc.conf
+else
+    conf=./clc/loc.conf
+fi
 
 show_help()
 {
