@@ -9,6 +9,8 @@ Clone this repo: `git clone https://github.com/eastev/CodeLinesCounter.git`
 
 Enter CodeLinesCounter directory `cd CodeLinesCounter`
 
+Make it executable `chmod +x loc`
+
 Run loc by the ways described in [Usage](#usage) or [Integrate](#make-loc-a-command) or [Command](#usage-as-command)
 
 ## Supported languages:
