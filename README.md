@@ -1,13 +1,13 @@
-# CodeLinesCounter
+# Code lines counter
 My own counter of code lines.
 This counter ignores comments and empty lines.
 
-## Get CodeLinesCounter
+## Get codelines
 To get it follow:
 
 Clone this repo: `git clone https://github.com/eastev/CodeLinesCounter.git`
 
-Enter CodeLinesCounter directory: `cd CodeLinesCounter`
+Enter directory: `cd codelines`
 
 Make it executable: `chmod +x loc`
 
