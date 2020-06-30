@@ -5,7 +5,7 @@ This counter ignores comments and empty lines.
 ## Get codelines
 To get it follow:
 
-Clone this repo: `git clone https://github.com/eastev/CodeLinesCounter.git`
+Clone this repo: `git clone https://github.com/eastev/codelines.git`
 
 Enter directory: `cd codelines`
 
