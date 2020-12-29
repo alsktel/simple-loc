@@ -10,10 +10,11 @@
 #include <stdio.h>
 
 /* Print logo and copyright notice */
-void print_logo()
+void print_logo(float version)
 {
-    printf("\n\n\033[1m%s\033[0m\n", "Simple source code lines counter");
-    printf("%s\n\n", "Copyright © eastev <eastevrud31@gmail.com>");
+    printf("\n\n\033[1m%s ", "Simple source code lines counter");
+    printf("v. %.1f\033[0m\n", version);
+    printf("%s\n", "Copyright © eastev <eastevrud31@gmail.com>");
 }
 
 /* Print bottom separator blank space */
@@ -37,13 +38,13 @@ void print_lang(const char* lang, int code, int files)
 /* Print tool info and help */
 void print_help()
 {
-    printf("\033[1m%s\033[0m \033[3m%s \033[2m%s %s\033[0m\n", "Usage:", "loc", "[OPTIONS]", "[ARGUMENTS]");
+    printf("\n\033[1m%s\033[0m \033[3m%s \033[2m%s\033[0m\n", "Usage:", "loc", "[OPTIONS]");
     printf("Count and print info about lines of source code.\n\n");
-    printf("\033[1m%s\033[0m\n", "Parameters and arguments:");
+    printf("\033[1m%s\033[0m\n", "Options list:");
     printf("%-10s\t%-10s\t%-50s\n", "-h --help", "NONE", "Show this help");
     printf("%-10s\t%-10s\t%-50s\n", "-f --file", "FILE", "Process specified file");
     printf("%-10s\t%-10s\t%-50s\n", "-d --dir", "DIRECTORY", "Process all files in specified directory");
     printf("%-10s\t%-10s\t%-50s\n", "-l --lang", "LANGUAGE", "Process specified language only");
-    printf("%-10s\t%-10s\t%-50s\n", "-c --conf", "NONE", "Run config tool");
+    printf("%-10s\t%-10s\t%-50s\n", "-c --conf", "NONE", "Run configuration tool");
     printf("\n\033[1m%s\033[0m\n", "Specifying no parameters runs loc for current directory.");
 }
