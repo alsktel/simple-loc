@@ -3,3 +3,6 @@ bin/*
 
 # Object files
 build/*
+
+# Editor settings
+.vscode/*
