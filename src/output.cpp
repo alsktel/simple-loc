@@ -7,34 +7,43 @@
  * Simple-loc output functions
  */
 
-#include <stdio.h>
+#include <fstream>
 
 #include <output.hpp>
 
-#define DEBUG
+#define LOCALDEV
+#define CONFPATH "etc/simple-loc/loc.conf"
 
 /* Print name and version */
 void loc::output::name()
 {
     output::tail();
 
-    float version;
+    std::string v;
+    std::string config_path = CONFPATH;
+    std::string line;
+    std::ifstream reader;
 
-    FILE* fd = fopen("/etc/simple-loc/loc.conf", "r");
+    #ifndef LOCALDEV
+        config_path = "/" + CONFPATH;
+    #endif
 
-    if(fd == NULL)
+    reader.open(config_path);
+
+    while(!reader.eof())
     {
-        #ifdef DEBUG
-            fd = fopen("etc/simple-loc/loc.conf", "r");
-        #else
+        std::getline(reader, line);
 
-        #endif
+        if(line.find("#") == std::string::npos && line.find("VERSION") != 
+            std::string::npos)
+        {
+            v = line.substr(line.find("=") + 1 + 1);
+        }
     }
 
-    fscanf(fd, "%f", &version);
-    fclose(fd);
+    reader.close();
 
-    printf("\033[1m%s v. %.1f\033[0m\n", "Simple code lines counter", version);
+    printf("\033[1m%s v. %s\033[0m\n", "Simple code lines counter", v.c_str());
     printf("Copyright © eastev <eastevrud31@gmail.com>\n\n");
 }
 
