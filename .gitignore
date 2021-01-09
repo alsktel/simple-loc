@@ -2,7 +2,7 @@
 bin/*
 
 # Object files
-build/*
+obj/*
 
 # Editor settings
 .vscode/*
