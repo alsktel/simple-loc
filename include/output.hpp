@@ -32,7 +32,7 @@ namespace loc
             static void name();
 
             /* Print statistics for specified language */
-            static void lang(std::string lang, int files, int code);
+            static void lang(std::string lang, uint files, uint code);
     };
 }
 
