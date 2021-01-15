@@ -11,7 +11,6 @@
 
 #include <output.hpp>
 
-#define LOCALDEV
 #define CONFPATH "etc/simple-loc/loc.conf"
 
 /* Print name and version */
@@ -24,8 +23,8 @@ void loc::output::name()
     std::string line;
     std::ifstream reader;
 
-    #ifndef LOCALDEV
-        config_path = "/" + CONFPATH;
+    #ifndef __local_dev__
+        config_path = "/" + config_path;
     #endif
 
     reader.open(config_path);
@@ -70,4 +69,16 @@ void loc::output::help()
 void loc::output::tail()
 {
     printf("\n\n");
+}
+
+/* Print table header */
+void loc::output::head()
+{
+    printf("\033[1m%-16s  %8s  %8s\033[0m\n", "Language", "Files", "Code");
+}
+
+ /* Print statistics for specified language */
+void loc::output::lang(std::string lang, uint files, uint code)
+{
+    printf("%-16s  %*d  %*d\n", lang.c_str(), 8, files, 8, code);
 }
