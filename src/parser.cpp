@@ -14,30 +14,9 @@
 
 #define UNSUPPORTED "NONE"
 
-void skip_comments(std::ifstream& file)
-{
-    char c;
-
-    while(true)
-    {
-        c = file.get();
-
-        if(c == '#')
-        {
-            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-        else
-        {
-            break;
-        }
-    }
-}
-
 loc::parser::parser(std::string& config)
 {
     config_reader.open(config);
-    
-    skip_comments(config_reader);
 
     langs = std::vector<loc::lang>();
 }
@@ -74,12 +53,19 @@ loc::lang loc::parser::get_lang(std::string& ext)
             config_reader >> token;
             config_reader >> _ext;
 
-            if(ext != _ext)
+            if(ext == _ext)
             {
-                while(token != "{" && !config_reader.eof())
+                continue;
+            }
+            else
+            {
+                while(token != "}" && !config_reader.eof())
                 {
                     config_reader >> token;
+                    continue;
                 }
+
+                continue;
             }
         }
         else if(token == "COMMENT")
@@ -98,7 +84,7 @@ loc::lang loc::parser::get_lang(std::string& ext)
             b_comment_close = arr_token.substr(arr_token.find(',') + 2);
             b_comment_open = arr_token.substr(0, arr_token.find(','));
         }
-        else if(token == "}")
+        else if(token == "}" && !config_reader.eof())
         {
             config_reader.clear();
             config_reader.seekg(0);
@@ -106,9 +92,6 @@ loc::lang loc::parser::get_lang(std::string& ext)
             return lang(name, comment, b_comment_open, b_comment_close);
         }
     }
-
-    fprintf(stderr, "\033[0;33mWARNING\033[0m: Unsupported language ");
-    fprintf(stderr, "with file extension '.%s'\n", ext.c_str());
 
     config_reader.clear();
     config_reader.seekg(0);
@@ -160,7 +143,9 @@ uint count_code(std::string& file_name, loc::lang& lang)
         }
         else if(line.find(lang.get_comment_block_open()) == 0)
         {
-            if(line.find(lang.get_comment_block_close()) == std::string::npos)
+            if(line.find(lang.get_comment_block_close()) == 
+                std::string::npos || lang.get_comment_block_open() ==
+                lang.get_comment_block_close())
                 cf = false;
         }
         else if(line.find(lang.get_comment_block_close()) == 0)
@@ -214,6 +199,12 @@ void loc::parser::file(std::string& name)
         {
             langs[i].add_code(count_code(name, langs[i]));
             langs[i].add_file();
+
+            return;
         }
     }
+
+    langs.push_back(language);
+    langs[langs.size() - 1].add_code(count_code(name, language));
+    langs[langs.size() - 1].add_file();
 }
