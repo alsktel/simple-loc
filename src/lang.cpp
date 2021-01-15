@@ -9,9 +9,14 @@
 
 #include <lang.hpp>
 
-loc::lang::lang(std::string& name)
+loc::lang::lang(std::string& name, std::string& comment,
+                    std::string& comment_block_open, 
+                    std::string& comment_block_close)
 {
     this->name = name;
+    this->comment = comment;
+    this->comment_block_open = comment_block_open;
+    this->comment_block_close = comment_block_close;
     this->code = 0;
     this->files = 0;
 }
@@ -63,4 +68,19 @@ void loc::lang::add_code(uint code)
 
     fprintf(stderr, "\033[0;31mERROR\033[0m: Too much code!\n\n");
     exit(-1);
+}
+
+std::string& loc::lang::get_comment()
+{
+    return this->comment;
+}
+
+std::string& loc::lang::get_comment_block_open()
+{
+    return this->comment_block_open;
+}
+
+std::string& loc::lang::get_comment_block_close()
+{
+    return this->comment_block_close;
 }
