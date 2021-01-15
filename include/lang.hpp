@@ -22,7 +22,6 @@ namespace loc
         std::string comment_block_close;
 
         public:
-
             uint files;
             uint code;
 

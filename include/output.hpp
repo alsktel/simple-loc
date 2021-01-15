@@ -18,7 +18,6 @@ namespace loc
     class output
     {
         public:
-
             /* Print help (usage and options) */
             static void help();
 

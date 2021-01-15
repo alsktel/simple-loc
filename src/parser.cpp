@@ -46,7 +46,6 @@ loc::lang loc::parser::get_lang(std::string& ext)
             config_reader >> token;
             config_reader >> name;
             config_reader >> token;
-            
         }
         else if(token == "EXT")
         {

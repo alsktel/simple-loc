@@ -26,7 +26,6 @@ namespace loc
         lang get_lang(std::string& ext);
 
         public:
-
             std::vector<loc::lang> langs;
 
             /* Init */
