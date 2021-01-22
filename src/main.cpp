@@ -11,5 +11,12 @@
 
 int main(int argc, const char** argv)
 {
-    return loc::args::parse(argc, argv);
+    std::vector<std::string> _argv;
+
+    for(int i = 0; i < argc; i++)
+    {
+        _argv.push_back(argv[i]);
+    }
+
+    return loc::args::parse(argc, _argv);
 }
