@@ -9,6 +9,7 @@
 
 #include <limits>
 #include <algorithm>
+#include <filesystem>
 
 #include <parser.hpp>
 
@@ -180,6 +181,7 @@ uint count_code(std::string& file_name, loc::lang& lang)
 void loc::parser::file(std::string& name)
 {
     std::string ext = name.substr(name.rfind('.') + 1);
+    ext.erase(std::remove(ext.begin(), ext.end(), '/'), ext.end());
     lang language = get_lang(ext);
 
     if(language.get_name() == UNSUPPORTED)
@@ -206,4 +208,43 @@ void loc::parser::file(std::string& name)
     langs.push_back(language);
     langs[langs.size() - 1].add_code(count_code(name, language));
     langs[langs.size() - 1].add_file();
+}
+
+void loc::parser::dir(std::string& dir)
+{
+    for(auto & file : std::filesystem::directory_iterator(dir))
+    {
+        std::string name = file.path();
+
+        if(file.is_directory())
+            this->dir(name);
+        else
+            this->file(name);
+    }
+}
+
+void loc::parser::files_only()
+{
+    for(auto & file : std::filesystem::directory_iterator("."))
+    {
+        std::string name = file.path();
+
+        if(file.is_directory())
+            continue;
+        else
+            this->file(name);
+    }
+}
+
+void loc::parser::files_only(std::string& dir)
+{
+    for(auto & file : std::filesystem::directory_iterator(dir))
+    {
+        std::string name = file.path();
+
+        if(file.is_directory())
+            continue;
+        else
+            this->file(name);
+    }
 }

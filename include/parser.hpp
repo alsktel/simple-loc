@@ -40,11 +40,12 @@ namespace loc
             /* Parse files with specific extension in current directory */
             void ext(std::string& dir_name, std::string& ext);
 
-            /* Parse all files in directory */
+            /* Parse all in specified directory */
             void dir(std::string& name);
 
-            /* Parse all files and subdirectories recursively */
-            void all(std::string& name);
+            /* Process only files in curent directory and in other directory */
+            void files_only();
+            void files_only(std::string& dir);
     };
 }
 
