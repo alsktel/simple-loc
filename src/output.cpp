@@ -56,7 +56,6 @@ void loc::output::help()
     printf("in this directory and subdirectories.\n\n");
     printf("\033[1mOptions list:\033[0m\n");
     printf("%-24s %s\n", "-h --help", "Print this help");
-    printf("%-24s %s\n", "-c --configure", "Run configuration tool");
     printf("%-24s %s\n", "-l --language", "Process only specified language");
     printf("%-24s %s\n", "-f --files-only", "Process files only (no subdirs)");
     printf("%-24s %s\n", "-d --directory", "Start from specified directory");
