@@ -18,66 +18,77 @@
 #define CONFIG "etc/simple-loc/langs.conf"
 
 /* Parse arguments and call specified functions */
-int loc::args::parse(int argc, const char** argv)
+int loc::args::parse(int argc, std::vector<std::string>& argv)
 {
-    if(argc == 1)
-    {
-        output::help();
+    std::string conf_path = CONFIG; 
 
-        return 0;
-    }
+    #ifndef __local_dev__
+        conf_path = "/" + conf_path;
+    #endif
 
     std::string arg;
+    loc::parser parser(conf_path);
 
-    for(int i = 0; i < argc; i++)
+    if(argc == 1)
     {
-        arg = std::string(argv[i]);
+        std::string cdir = ".";
 
-        /* Show help */
-        if(arg == "-h" || arg == "--help")
+        parser.dir(cdir);
+    }
+    else
+    {
+        for(int i = 1; i < argc; i++)
         {
-            output::help();
+            arg = std::string(argv[i]);
 
-            return 0;
-        }
-        else if(arg == "-f" || arg == "--files-only")
-        {
-            std::string conf_path = CONFIG; 
-
-            #ifndef __local_dev__
-                conf_path = "/" + conf_path;
-            #endif
-
-            parser parser(conf_path);
-
-            for(auto & file : std::filesystem::directory_iterator("."))
+            /* Show help */
+            if(arg == "-h" || arg == "--help")
             {
-                if(file.is_directory())
-                    continue;
+                output::help();
 
-                std::string file_path = file.path();
+                return 0;
+            }
+            else if(arg == "-f" || arg == "--files-only")
+            {
+                std::vector<std::string>::iterator iterator;
+                iterator = std::find(argv.begin(), argv.end(), "-d");
 
-                if(file_path[0] == '.')
+                if(iterator != argv.end())
+                    parser.files_only(*(std::next(iterator)));
+                else
                 {
-                    file_path.erase(0, 2);
+                    iterator = std::find(argv.begin(), argv.end(), "-d");
+
+                    if(iterator != argv.end())
+                        parser.files_only(*(std::next(iterator)));
+                    else
+                        parser.files_only();
                 }
-
-                parser.file(file_path);
             }
-
-            output::name();
-            output::head();
-
-            for(size_t i = 0; i < parser.langs.size(); i++)
+            else if(arg == "-d" || arg == "--directory")
             {
-                output::lang(parser.langs[i].get_name(), 
-                                parser.langs[i].files, 
-                                parser.langs[i].code);
+                parser.dir(argv[i + 1]);
             }
+            else
+            {
+                printf("\033[0;31mError\033[0m: No option %s\n", arg.c_str());
+                output::tail();
 
-            output::tail();
+                return 1;
+            }
         }
     }
+
+    output::name();
+    output::head();
+
+    for(size_t i = 0; i < parser.langs.size(); i++)
+    {
+        output::lang(parser.langs[i].get_name(), parser.langs[i].files, 
+                        parser.langs[i].code);
+    }
+
+    output::tail();
 
     return 0;
 }

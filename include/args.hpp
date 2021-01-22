@@ -10,13 +10,16 @@
 #ifndef __ARGS_HPP__
 #define __ARGS_HPP__
 
+#include <string>
+#include <vector>
+
 namespace loc
 {
     /* Arguments parser class */
     class args
     {
         public:
-            static int parse(int argc, const char** argv);
+            static int parse(int argc, std::vector<std::string>& argv);
     };
 }
 
