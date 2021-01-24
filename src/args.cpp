@@ -57,17 +57,42 @@ int loc::args::parse(int argc, std::vector<std::string>& argv)
                     parser.files_only(*(std::next(iterator)));
                 else
                 {
-                    iterator = std::find(argv.begin(), argv.end(), "-d");
+                    iterator = std::find(argv.begin(), argv.end(),      
+                                            "--directory");
 
                     if(iterator != argv.end())
                         parser.files_only(*(std::next(iterator)));
                     else
                         parser.files_only();
                 }
+
+                break;
             }
             else if(arg == "-d" || arg == "--directory")
             {
-                parser.dir(argv[i + 1]);
+                parser.dir(argv[++i]);
+
+                break;
+            }
+            else if(arg == "-l" || arg == "--language")
+            {
+                std::vector<std::string>::iterator iterator;
+                iterator = std::find(argv.begin(), argv.end(), "-d");
+
+                if(iterator != argv.end())
+                    parser.language(argv[++i], *(std::next(iterator)));
+                else
+                {
+                    iterator = std::find(argv.begin(), argv.end(), 
+                                            "--directory");
+
+                    if(iterator != argv.end())
+                        parser.language(argv[++i], *(std::next(iterator)));
+                    else
+                        parser.language(argv[++i]);
+                }
+
+                break;
             }
             else
             {
