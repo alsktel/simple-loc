@@ -19,6 +19,13 @@ loc::parser::parser(std::string& config)
 {
     config_reader.open(config);
 
+    if(!config_reader.is_open())
+    {
+        fprintf(stderr, "\033[0;31mError\033[0m: Config not found\n\n\n");
+
+        std::exit(-1);
+    }
+
     langs = std::vector<loc::lang>();
 }
 

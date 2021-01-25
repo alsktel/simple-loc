@@ -29,6 +29,13 @@ void loc::output::name()
 
     reader.open(config_path);
 
+    if(!reader.is_open())
+    {
+        fprintf(stderr, "\033[0;31mError\033[0m: Config not found\n\n\n");
+
+        std::exit(-1);
+    }
+
     while(!reader.eof())
     {
         std::getline(reader, line);
@@ -49,7 +56,6 @@ void loc::output::name()
 /* Print usage and options list */
 void loc::output::help()
 {
-    output::name();
     printf("\033[1m%s\033[0m %s ", "Usage:", "loc");
     printf("\033[2m%s\033[0m\n", "[OPTIONS]");
     printf("Print info about lines of code of each language for each file\n");

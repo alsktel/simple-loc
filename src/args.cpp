@@ -20,6 +20,8 @@
 /* Parse arguments and call specified functions */
 int loc::args::parse(int argc, std::vector<std::string>& argv)
 {
+    output::name();
+
     std::string conf_path = CONFIG; 
 
     #ifndef __local_dev__
@@ -104,7 +106,6 @@ int loc::args::parse(int argc, std::vector<std::string>& argv)
         }
     }
 
-    output::name();
     output::head();
 
     for(size_t i = 0; i < parser.langs.size(); i++)
