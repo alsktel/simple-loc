@@ -42,3 +42,33 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 clean:
 	@rm -f obj/*
 	@rm -f bin/*
+
+install:
+	@echo ""
+	@echo -e "Installing \033[1mSimple-loc\033[0m"
+	@if [ ! -f bin/loc ]; then \
+	echo -e "\033[0;31mError\033[0m: Simple-loc needs to be builded"; \
+	echo ""; exit 1; fi
+	@cp bin/loc /bin/loc
+	@chmod a+x /bin/loc
+	@cp -r etc/simple-loc /etc
+	@echo -e "Installation completed \033[0;32msuccessfully\033[0m!"
+	@echo ""
+
+uninstall:
+	@echo ""
+	@echo -e "Uninstalling \033[1mSimple-loc\033[0m"
+	@if [ -f /bin/loc ]; then rm /bin/loc; fi
+	@if [ -d /etc/simple-loc ]; then rm -rf /etc/simple-loc/; fi
+	@echo -e "Uninstallation completed \033[0;32msuccessfully\033[0m!"
+	@echo ""
+
+help:
+	@echo ""
+	@echo -en "\033[1mTo build simple-loc use:\033[0m "
+	@echo -e "\033[3mmake\033[0m"
+	@echo -en "\033[1mTo install simple-loc use:\033[0m "
+	@echo -e "\033[3msudo make install\033[0m"
+	@echo -en "\033[1mTo uninstall simple-loc use:\033[0m "
+	@echo -e "\033[3msudo make uninstall\033[0m"
+	@echo ""
