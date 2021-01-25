@@ -7,7 +7,7 @@ SRC = src
 OBJECTS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, \
 		$(shell find src -type f -printf "%p "))
 
-all: debug
+all: release
 	@echo ""
 
 debug: d_log assemble
@@ -29,7 +29,7 @@ assemble: $(OBJECTS)
 	@if (( $$? == 0 )); then echo -e "\033[0;32mSuccess\033[0m!"; fi
 
 release_set:
-	CC = @g++ -g -I include -D __local_dev__ -Wall -c -std=c++20
+	@$(eval CC = @g++ -I include -Wall -c -std=c++20)
 
 $(OBJ)/%.o: $(SRC)/%.cpp
 	@set -o pipefail
@@ -41,3 +41,4 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 
 clean:
 	@rm -f obj/*
+	@rm -f bin/*
