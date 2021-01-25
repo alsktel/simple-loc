@@ -248,3 +248,133 @@ void loc::parser::files_only(std::string& dir)
             this->file(name);
     }
 }
+
+std::string loc::parser::get_lang_ext(std::string& lang)
+{
+    std::string lang_token;
+    std::string ext;
+    std::string token;
+
+    while(!config_reader.eof())
+    {
+        config_reader >> token;
+
+        if(token == "LANG")
+        {
+            config_reader >> token;
+            config_reader >> lang_token;
+
+            if(lang_token == lang)
+            {
+                config_reader >> token;
+                config_reader >> token;
+
+                if(token == "EXT")
+                {
+                    config_reader >> token;
+                    config_reader >> ext;
+                }
+                else
+                {
+                    break;
+                }
+
+                config_reader.clear();
+                config_reader.seekg(0);
+
+                return ext;
+            }
+        }
+    }
+
+    config_reader.clear();
+    config_reader.seekg(0);
+
+    return std::string(UNSUPPORTED);
+}
+
+void loc::parser::parse_lang(std::string& lang, std::string& file)
+{
+    if(lang == "C")
+    {
+        std::string _ext = "c";
+        std::string name = file;
+        std::string ext = name.substr(name.rfind('.') + 1);
+        ext.erase(std::remove(ext.begin(), ext.end(), '/'), ext.end());
+
+        if(ext == _ext)
+        {
+            this->file(file);
+        }
+
+        _ext = "h";
+
+        if(ext == _ext)
+        {
+            this->file(file);
+        }
+
+        if(ext != "c" && ext != "h")
+            return;
+    }
+    else if(lang == "C++")
+    {
+        std::string _ext = "cpp";
+        std::string name = file;
+        std::string ext = name.substr(name.rfind('.') + 1);
+        ext.erase(std::remove(ext.begin(), ext.end(), '/'), ext.end());
+
+        if(ext == _ext)
+        {
+            this->file(file);
+        }
+
+        _ext = "hpp";
+
+        if(ext == _ext)
+        {
+            this->file(file);
+        }
+
+        if(ext != "cpp" && ext != "hpp")
+            return;
+    }
+    else
+    {
+        std::string _ext = this->get_lang_ext(lang);
+        std::string name = file;
+        std::string ext = name.substr(name.rfind('.') + 1);
+        ext.erase(std::remove(ext.begin(), ext.end(), '/'), ext.end());
+
+        if(ext == _ext)
+        {
+            this->file(file);
+        }
+    }
+}
+
+void loc::parser::language(std::string& lang)
+{
+    for(auto & file : std::filesystem::directory_iterator("."))
+    {
+        std::string name = file.path();
+
+        if(file.is_directory())
+            continue;
+        else
+            this->parse_lang(lang, name);
+    }
+}
+
+void loc::parser::language(std::string& lang, std::string& directory)
+{
+    for(auto & file : std::filesystem::directory_iterator(directory))
+    {
+        std::string name = file.path();
+
+        if(file.is_directory())
+            continue;
+        else
+            this->parse_lang(lang, name);
+    }
+}

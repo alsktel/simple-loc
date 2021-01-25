@@ -25,6 +25,12 @@ namespace loc
         /* Get language name by file extension */
         lang get_lang(std::string& ext);
 
+        /* Get file extension associated with language */
+        std::string get_lang_ext(std::string& lang);
+
+        /* Extension language parsing algorithm */
+        void parse_lang(std::string& lang, std::string& file);
+
         public:
             std::vector<loc::lang> langs;
 
@@ -37,8 +43,9 @@ namespace loc
             /* Parse one file and add info to one languages in vector */
             void file(std::string& name);
 
-            /* Parse files with specific extension in current directory */
-            void ext(std::string& dir_name, std::string& ext);
+            /* Parse all files associated with specific language */
+            void language(std::string& language);
+            void language(std::string& language, std::string& directory);
 
             /* Parse all in specified directory */
             void dir(std::string& name);
