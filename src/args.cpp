@@ -17,6 +17,42 @@
 
 #define CONFIG "etc/simple-loc/langs.conf"
 
+void option_f(loc::parser& parser, std::vector<std::string>& argv)
+{
+    std::vector<std::string>::iterator iterator;
+    iterator = std::find(argv.begin(), argv.end(), "-d");
+
+    if(iterator != argv.end())
+        parser.files_only(*(std::next(iterator)));
+    else
+    {
+        iterator = std::find(argv.begin(), argv.end(), "--directory");
+
+        if(iterator != argv.end())
+            parser.files_only(*(std::next(iterator)));
+        else
+            parser.files_only();
+    }
+}
+
+void option_l(loc::parser& parser, std::vector<std::string>& argv, int& i)
+{
+    std::vector<std::string>::iterator iterator;
+    iterator = std::find(argv.begin(), argv.end(), "-d");
+
+    if(iterator != argv.end())
+        parser.language(argv[++i], *(std::next(iterator)));
+    else
+    {
+        iterator = std::find(argv.begin(), argv.end(), "--directory");
+
+        if(iterator != argv.end())
+            parser.language(argv[++i], *(std::next(iterator)));
+        else
+            parser.language(argv[++i]);
+    }
+}
+
 /* Parse arguments and call specified functions */
 int loc::args::parse(int argc, std::vector<std::string>& argv)
 {
@@ -52,21 +88,7 @@ int loc::args::parse(int argc, std::vector<std::string>& argv)
             }
             else if(arg == "-f" || arg == "--files-only")
             {
-                std::vector<std::string>::iterator iterator;
-                iterator = std::find(argv.begin(), argv.end(), "-d");
-
-                if(iterator != argv.end())
-                    parser.files_only(*(std::next(iterator)));
-                else
-                {
-                    iterator = std::find(argv.begin(), argv.end(),      
-                                            "--directory");
-
-                    if(iterator != argv.end())
-                        parser.files_only(*(std::next(iterator)));
-                    else
-                        parser.files_only();
-                }
+                option_f(parser, argv);
 
                 break;
             }
@@ -78,21 +100,7 @@ int loc::args::parse(int argc, std::vector<std::string>& argv)
             }
             else if(arg == "-l" || arg == "--language")
             {
-                std::vector<std::string>::iterator iterator;
-                iterator = std::find(argv.begin(), argv.end(), "-d");
-
-                if(iterator != argv.end())
-                    parser.language(argv[++i], *(std::next(iterator)));
-                else
-                {
-                    iterator = std::find(argv.begin(), argv.end(), 
-                                            "--directory");
-
-                    if(iterator != argv.end())
-                        parser.language(argv[++i], *(std::next(iterator)));
-                    else
-                        parser.language(argv[++i]);
-                }
+                option_l(parser, argv, i);
 
                 break;
             }
