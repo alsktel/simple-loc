@@ -24,7 +24,7 @@ r_log:
 
 assemble: $(OBJECTS)
 	@echo -n "Assembling loc - "
-	@if [ ! -d obj ]; then mkdir bin; fi
+	@if [ ! -d bin ]; then mkdir bin; fi
 	@g++ -Wall $(OBJECTS) -o bin/loc
 	@if (( $$? == 0 )); then echo -e "\033[0;32mSuccess\033[0m!"; fi
 
